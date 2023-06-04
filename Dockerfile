@@ -16,19 +16,19 @@ VOLUME [ "/workdir" ]
 
 RUN apt update && \
     apt -y upgrade && \
-    apt install -y vim curl git python3 python3-venv build-essential cmake python3-dev golang nodejs openjdk-17-jdk openjdk-17-jre npm 
+    apt install -y vim curl git python3 python3-venv build-essential cmake python3-dev golang nodejs openjdk-17-jdk openjdk-17-jre npm zsh fonts-powerline
 
 USER $USERNAME
 WORKDIR $HOME_DIR 
 
 RUN curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-COPY .vimrc .vimrc
+COPY --chown=$UID:$GID .vimrc run.sh ./
+
 RUN vim -c ':PlugInstall' \
     -c 'qa!' # Quit vim
 
 WORKDIR ${HOME_DIR}/.vim/plugged/YouCompleteMe
 RUN python3 install.py
-WORKDIR $HOME_DIR 
 
-COPY run.sh run.sh
+WORKDIR $HOME_DIR 
 ENTRYPOINT ["/bin/bash", "run.sh"]

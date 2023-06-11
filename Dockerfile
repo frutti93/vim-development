@@ -16,7 +16,10 @@ VOLUME [ "/workdir" ]
 
 RUN apt update && \
     apt -y upgrade && \
-    apt install -y vim curl git python3 python3-venv build-essential cmake python3-dev golang nodejs openjdk-17-jdk openjdk-17-jre npm zsh fonts-powerline
+    apt install -y vim curl git python3 python3-venv \
+    python3-setuptools build-essential cmake python3-dev \
+    golang nodejs openjdk-17-jdk openjdk-17-jre \
+    npm zsh fonts-powerline
 
 USER $USERNAME
 WORKDIR $HOME_DIR 
@@ -27,8 +30,7 @@ COPY --chown=$UID:$GID .vimrc run.sh ./
 RUN vim -c ':PlugInstall' \
     -c 'qa!' # Quit vim
 
-WORKDIR ${HOME_DIR}/.vim/plugged/YouCompleteMe
-RUN python3 install.py
+RUN python3 ${HOME_DIR}.vim/plugged/YouCompleteMe/install.py
+RUN python3 ${HOME_DIR}.vim/plugged/vimspector/install_gadget.py --enable-python
 
-WORKDIR $HOME_DIR 
 ENTRYPOINT ["/bin/bash", "run.sh"]
